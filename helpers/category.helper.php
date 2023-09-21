@@ -7,7 +7,12 @@
 
 function getCategories() : array
 {
-    return ['Politique','Economie','Social', 'Culture', 'Sport'];
+    //recuperation de ma varbale $dbh  depuis l'espace global php
+    global $dbh;
+    # j'effectue  ma requete de recuperation des categories
+    $query = $dbh -> query('SELECT * FROM category');
+    #je retourne le resultat
+    return $query-> fetchAll();
 }
 
 
