@@ -6,6 +6,13 @@
      * passées dans mon URL. Ex. categorie.php?slug=politique
      */
     //var_dump($_GET);
+
+    //recuperation du categoryslug dans mon url
+    $slug = $_GET['slug'];
+
+    // recuperation des articles via le categoryslug
+    $posts = getPostsByCategorySlug($slug);
+    
 ?>
 
 <!-- Contenu de notre page -->
@@ -14,7 +21,9 @@
 
     <!-- Titre de la page -->
     <div class="p-3 mx-auto text-center">
-        <h1 class="display-4 text-capitalize"> <?= $_GET['slug'] ?></h1>
+        <h1 class="display-4 text-capitalize">
+            <?= $_GET['slug'] ?>
+        </h1>
     </div>
 
     <!-- Contenu de la page -->
@@ -22,9 +31,26 @@
     <div class="py-5 bg-light">
         <div class="container">
             <div class="row">
-                <div class="col">
-                    <h3>Page d'Exemple</h3>
-                </div>
+                <?php foreach ($posts as $post): ?>
+                    <div class="col-md-4 mt-4">
+                        <div class="card shadow-sm h-100">
+                            <img class="img-fluid" src="<?= $post['image'] ?>" alt="<?= $post['title'] ?>">
+                            <div class="card-body">
+                                <h5 class="card-title"><?= $post['title'] ?></h5>
+                                <small class="text-muted">
+                                    <?= $post['firstname'] . ' ' . $post['lastname']
+                                    . ' | Publié le ' . $post['created_at']  ?>
+                                </small>
+                                <p class="card-text">
+                                    <?= summarize($post['content'], 120) ?>
+                                </p>
+                                <a href="#" class="btn btn-primary">
+                                    Lire la suite
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach ?>
             </div>
         </div>
     </div>

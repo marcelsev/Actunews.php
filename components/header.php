@@ -4,6 +4,7 @@ require_once 'config/config.php';
 // importation de la conexion a la BDD
 require_once 'config/database.php';
 //importation des helpers
+require_once './helpers/global.helper.php';
 require_once './helpers/category.helper.php';
 require_once './helpers/post.helper.php';
 // recuperation des categories

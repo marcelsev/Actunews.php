@@ -20,14 +20,16 @@ $posts = getPosts(6);
             <div class="row">
                 <?php foreach ($posts as $post): ?>
                 <div class="col-md-4 mt-4">
-                    <div class="card shadow-sm"><img class="img-fluid" src="<?= $post['image']?>" alt="<?= $post['title']?>">
+                    <div class="card shadow-sm h-100"><img class="img-fluid" src="<?= $post['image']?>" alt="<?= $post['title']?>">
                         <div class="card-body">
                             <h5 class="card-title"><?= $post['title'] ?></h5>
                             <small class="text-muted">
                                     <?= $post['firstname'] . ' ' . $post['lastname']
                                     . ' | Publié le ' . $post['created_at']  ?>
                                 </small>
-                            <p class="card-text">[ACCROCHE ARTICLE]</p>
+                            <p class="card-text">
+                            <?= summarize($post['content'], 120) ?>
+                            </p>
                             <a href="#" class="btn btn-primary">Lire la suite</a>
                         </div>
                     </div>
