@@ -2,22 +2,26 @@
 # Inclusion du header
 require_once './components/header.php';
 
-$title = $slug = $content = $image = $id_category = $id_user  = null;
-if (!empty($_POST)) { 
-    
+# 1. Récupération des informations
+# Initialisation des variables à null
+$title = $slug = $content = $id_category = $image = $id_user = null;
+
+# 2. Vérification des données $_POST
+if (!empty($_POST)) {
+
+    # 3. Récupération des informations $_POST
     $title = $_POST['title'];
     $slug = $_POST['slug'];
     $content = $_POST['content'];
+    $id_category = $_POST['id_category'] ?? 0;
+    $id_user = 1; # TODO : A remplacer plus tard par l'utilisateur connecté
     $image = $_FILES['image'];
-    $id_category = $_POST['id_category'];
-    $id_user = 1; #TODO: a remplacer plus tard l'utilisateur connecté
 
-# verification des informations 
+    # 4. Vérification des informations
     $errors = [];
 
-
-    # Vérification du title
-    if (empty($title)){
+    # Vérification du titre
+    if (empty($title)) {
         $errors['title'] = "N'oubliez pas le titre de votre article";
     }
 
@@ -25,41 +29,45 @@ if (!empty($_POST)) {
         $errors['title'] = "Votre titre est trop long. Pas plus de 255 caractères.";
     }
 
-
     # Vérification de l'alias
     if (empty($slug)) {
-        # On le génère nous même à partir du titre
-        $slug = slugify($title);
+        if (!empty($title)) {
+            # On le génère nous même à partir du titre
+            $slug = slugify($title);
+        } else {
+            $errors['slug'] = "Vous devez saisir un titre pour générer un alias.";
+        }
     } else {
         # On le re-génère à partir de lui-même
         $slug = slugify($slug);
     }
 
+    # Vérification du contenu
     if (empty($content)) {
-        $errors['content'] = "N'oubliez pas mettre le contenu.";
+        $errors['content'] = "N'oubliez pas le contenu de votre article.";
     }
 
-    if (empty($image)) {
-        $errors['image'] = "N'oubliez pas metre l'image.";
+    # Vérification de la catégorie
+    if (empty($id_category)) {
+        $errors['id_category'] = "N'oubliez pas la catégorie de votre article";
     }
 
-    if ($category == "0") {
-        $errors['id_category'] = "Choisissez une categorie.";
-    }
-    
-  
-
-    /* if (empty($errors)) {
-        $idPost = insertUser($title, $slug, $content, $image, $category);
-        if($idPost) {
-             # TODO: Redirection vers la page connexion. Avec un message de confirmation.
-             # TODO Idéalement, les messages sont passés via les sessions PHP. Message Flash.
-             redirect('creer-un-article.php?info=Félicitation votre article a été bien creé.');
+    #5. TODO Upload de l'image
+    #6. TODO Notification Flash
+    #7. Insertion dans la BDD
+    if (empty($errors)) {
+        try {
+        $id_post = insertPost($title, $slug, $content, $id_category, $id_user, $image);
+            if ($id_post) {
+                #8. TODO Redirection
+            }
+        } catch (Exception $exception) {
+            dd($exception->getMessage());
         }
-} */
+    }
+
+
 }
-
-
 
 
 ?>
@@ -79,15 +87,18 @@ if (!empty($_POST)) {
         <div class="container">
             <div class="row">
                 <div class="col-8 mx-auto">
+
                     <!--
-                        enctype="multipart/form-data" : OBLIGATOIRE, il permet de transférer 
+                        enctype="multipart/form-data" : OBLIGATOIRE, il permet de transférer
                         des données multimédia via votre formulaire. Ex. PDF, IMAGES, VIDEOS, ...
                     -->
-                    <form id="createPostForm"  
-                    enctype="multipart/form-data" 
-                    method="post" 
-                    action="creer-un-article.php">
-                        <?php if (!empty($errors)) : ?>
+
+                    <form id="createPostForm"
+                          enctype="multipart/form-data"
+                          method="post">
+
+                        <!-- Affichage d'une notification d'erreur -->
+                        <?php if (!empty($errors)): ?>
                             <div class="alert alert-danger mt-4">
                                 <u>Une erreur est survenue dans la validation de vos données :</u> <br>
                                 <?php foreach ($errors as $error) : ?>
@@ -95,16 +106,20 @@ if (!empty($_POST)) {
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
+
                         <div class="mb-3">
                             <label for="title" class="form-label">Titre</label>
-                            <input type="text" class="form-control <?= isset($errors['title']) ? 'is-invalid' : '' ?>" id="title" name="title" value="<?= $title ?>" placeholder="Saisissez votre titre">
+                            <input type="text" class="form-control <?= isset($errors['title']) ? 'is-invalid' : '' ?>"
+                                   id="title" name="title" value="<?= $title ?>" placeholder="Saisissez votre titre">
                             <div class="invalid-feedback">
                                 <?= $errors['title'] ?? '' ?>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label for="Slug" class="form-label">Alias</label>
-                            <input type="text" class="form-control <?= isset($errors['slug']) ? 'is-invalid' : '' ?>" id="slug" name="slug" value="<?= $slug ?>" placeholder="Alias de l'article ">
+                            <input type="text" class="form-control <?= isset($errors['slug']) ? 'is-invalid' : '' ?>"
+                                   id="slug" name="slug" value="<?= $slug ?>" placeholder="Alias de l'article   ">
                             <div class="invalid-feedback">
                                 <?= $errors['slug'] ?? '' ?>
                             </div>
@@ -112,21 +127,28 @@ if (!empty($_POST)) {
 
                         <div class="mb-3">
                             <label for="id_category" class="form-label">Catégorie</label>
-                            <select id="id_category" class="form-control <?= isset($errors['id_category']) ? 'is-invalid' : '' ?>" name="id_category">
-                                <option  value="0">-- Choisissez une catégorie --</option>
-                                <?php foreach ($categories as $category) : ?>
-                                    <option 
-                                    <?= $category['id']== $id_category ? 'selected' : '' ?>
-                                    value="<?= $category['id_category'] ?>"><?= $category['name'] ?></option>
+                            <select
+                                    id="id_category" name="id_category" class="form-control <?= isset($errors['id_category']) ? 'is-invalid' : '' ?>" name="id_category">
+
+                                <option selected disabled value="0">-- Choisissez une catégorie --</option>
+                                <?php foreach ($categories as $category): ?>
+                                    <option
+                                            <?= $category['id_category'] == $id_category ? 'selected' : '' ?>
+                                            value="<?= $category['id_category'] ?>">
+                                        <?= $category['name'] ?>
+                                    </option>
                                 <?php endforeach ?>
                             </select>
                             <div class="invalid-feedback">
                                 <?= $errors['id_category'] ?? '' ?>
                             </div>
                         </div>
+
                         <div class="mb-3">
-                            <label for="content" class="form-label ">Contenu</label>
-                            <textarea name="content" class="form-control <?= isset($errors['content']) ? 'is-invalid' : '' ?>" id="content" placeholder="Saisissez votre contenu"><?= $content; ?></textarea>
+                            <label for="content" class="form-label">Contenu</label>
+                            <textarea class="form-control <?= isset($errors['content']) ? 'is-invalid' : '' ?>"
+                                      id="content" name="content"
+                                      placeholder="Saisissez votre contenu"><?= $content ?></textarea>
                             <script>
                                 CKEDITOR.replace('content');
                             </script>
@@ -134,16 +156,20 @@ if (!empty($_POST)) {
                                 <?= $errors['content'] ?? '' ?>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label for="image" class="form-label">Image</label>
-                            <input type="file" class="form-control <?= isset($errors['img']) ? 'is-invalid' : '' ?>" id="image" name="image" placeholder="Choisissez votre image">
+                            <input type="file" class="form-control <?= isset($errors['image']) ? 'is-invalid' : '' ?>"
+                                   id="image" name="image" placeholder="Choisissez votre image">
                             <div class="invalid-feedback">
                                 <?= $errors['image'] ?? '' ?>
                             </div>
                         </div>
+
                         <div class="d-grid gap-2">
                             <button class="btn btn-dark">Publier mon article</button>
                         </div>
+
                     </form>
                 </div>
             </div>

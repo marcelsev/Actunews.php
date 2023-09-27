@@ -155,23 +155,21 @@ function insertPost(
     string $slug,
     string $content,
     string $image,
-    string $category
+    string $id_category,
+    string $id_user
 ){
     global $dbh;
 
-
-
-
-
-    $sql = 'INSERT INTO post (title, slug, content, image, id_category, created_at, updated_at) 
-    VALUES (:title, :slug, :content, :image, :id_category, :created_at, :updated_at)';
+    $sql = 'INSERT INTO post (title, slug, content, image, id_category, id_user, created_at, updated_at) 
+    VALUES (:title, :slug, :content, :image, :id_category, :id_user, :created_at, :updated_at)';
     
     $query = $dbh->prepare($sql);
     $query->bindValue('title', $title);
     $query->bindValue('slug', $slug);
     $query->bindValue('content', $content);
     $query->bindValue('image', $image);
-    $query->bindValue('id_category', $category);
+    $query->bindValue('id_category', $id_category);
+    $query->bindValue('id_user', $id_user);
     $query->bindValue('created_at', (new DateTime())->format('Y-m-d H:i:s') );
     $query->bindValue('updated_at', (new DateTime())->format('Y-m-d H:i:s') );
  
