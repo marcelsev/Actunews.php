@@ -1,18 +1,34 @@
 <?php
 function getPosts(int $limit = null)
 {
-
-    #todo recuperer et retourner tous les articles de la BDD
+    # Récupérer et Retourner tous les articles de la BDD
     global $dbh;
-    //creation de ma requete SQL
-    $sql = 'SELECT p.id_post, p.title, p.content, p.image, p.slug as postSlug, p.created_at, c.name, c.slug as categorySlug, u.firstname, u.lastname, u.username FROM post p INNER JOIN category c on p.id_category = c.id_category INNER JOIN user u on p.id_user = u.id_user ORDER BY p.created_at DESC';
 
-    //si une $liit a ete passe en parametre de la fonction alors je l'ajoute a la requete
+    # Création de ma requête SQL
+    $sql = 'SELECT p.id_post,
+               p.title,
+               p.content,
+               p.image,
+               p.slug as postSlug,
+               p.created_at,
+               c.name,
+               c.slug as categorySlug,
+               u.id_user,
+               u.firstname,
+               u.lastname,
+               u.username
+            FROM post p
+                INNER JOIN category c on p.id_category = c.id_category
+                INNER JOIN user u on p.id_user = u.id_user
+                    ORDER BY p.created_at DESC';
+
+    # Si une "$limit" a été passé en paramètre de ma fonction, alors je l'ajoute à la requête
     $limit !== null ? $sql .= " LIMIT $limit" : '';
+
+    # Execution de ma requête
     $query = $dbh->query($sql);
-    #TODO bonus : on souhaite recuperer egalemetn, l'auteur (pseudo) et la categorie (name)
-    //$query = $dbh -> query('SELECT username as auteur, category_ame as category FROM post INNER JOIN user ON post.id_user = user.id_user INNER JOIN category ON post.id_category = category.id_category WHERE post.id_post= "category, auteur"');
-    #TODO bonus: ajouter en parametre une limit d'article a recuperer  
+
+    # Retour du résultat
     return $query->fetchAll();
 }
 
@@ -21,7 +37,8 @@ function getPosts(int $limit = null)
  * Permet de récupérer les articles
  * de la BDD via le slug de la catégorie.
  */
-function getPostsByCategorySlug(string $categorySlug) {
+function getPostsByCategorySlug(string $categorySlug)
+{
 
     global $dbh;
 
@@ -56,4 +73,108 @@ function getPostsByCategorySlug(string $categorySlug) {
 
     # Retour du résultat
     return $query->fetchAll();
+}
+
+function getPostBySlug(string $postSlug)
+{
+
+    global $dbh;
+
+    $sql = 'SELECT p.id_post,
+                   p.title,
+                   p.content,
+                   p.image,
+                   p.slug as postSlug,
+                   p.created_at,
+                   c.name,
+                   c.slug as categorySlug,
+                   u.id_user,
+                   u.firstname,
+                   u.lastname,
+                   u.username
+                FROM post p
+                    INNER JOIN category c on p.id_category = c.id_category
+                    INNER JOIN user u on p.id_user = u.id_user
+                        WHERE p.slug = :postSlug
+                            ORDER BY p.created_at DESC';
+
+    # Préparation de ma requête
+    # ⚠️⚠️ Paramètre externe = requête préparée ⚠️⚠️
+    $query = $dbh->prepare($sql);
+
+    # J'associe à ma requête le paramètre categorySlug.
+    # NOTA BENE : Cette préparation me protège contre les injections SQL.
+    $query->bindValue(':postSlug', $postSlug, PDO::PARAM_STR);
+
+    # Execution de ma requête
+    $query->execute();
+
+    # Retour du résultat
+    return $query->fetch();
+}
+
+function getPostsByUserId(int $postUserId)
+{
+    global $dbh;
+    $sql = 'SELECT p.id_post,
+                   p.title,
+                   p.content,
+                   p.image,
+                   p.slug as postSlug,
+                   p.created_at,
+                   c.name,
+                   c.slug as categorySlug,
+                   u.id_user,
+                   u.firstname,
+                   u.lastname,
+                   u.username
+                FROM post p
+                    INNER JOIN category c on p.id_category = c.id_category
+                    INNER JOIN user u on p.id_user = u.id_user
+                        WHERE u.id_user = :postUserId
+                            ORDER BY p.created_at DESC';
+
+    # Préparation de ma requête
+    # ⚠️⚠️ Paramètre externe = requête préparée ⚠️⚠️
+    $query = $dbh->prepare($sql);
+
+    # J'associe à ma requête le paramètre categorySlug.
+    # NOTA BENE : Cette préparation me protège contre les injections SQL.
+    $query->bindValue(':postUserId', $postUserId, PDO::PARAM_INT);
+
+    # Execution de ma requête
+    $query->execute();
+
+    # Retour du résultat
+    return $query->fetchAll();
+}
+
+
+function insertPost(
+    string $title,
+    string $slug,
+    string $content,
+    string $image,
+    string $category
+){
+    global $dbh;
+
+
+
+
+
+    $sql = 'INSERT INTO post (title, slug, content, image, id_category, created_at, updated_at) 
+    VALUES (:title, :slug, :content, :image, :id_category, :created_at, :updated_at)';
+    
+    $query = $dbh->prepare($sql);
+    $query->bindValue('title', $title);
+    $query->bindValue('slug', $slug);
+    $query->bindValue('content', $content);
+    $query->bindValue('image', $image);
+    $query->bindValue('id_category', $category);
+    $query->bindValue('created_at', (new DateTime())->format('Y-m-d H:i:s') );
+    $query->bindValue('updated_at', (new DateTime())->format('Y-m-d H:i:s') );
+ 
+    
+    return $query->execute() ? $dbh->lastInsertId() : false;
 }

@@ -7,6 +7,7 @@ require_once 'config/database.php';
 require_once './helpers/global.helper.php';
 require_once './helpers/category.helper.php';
 require_once './helpers/post.helper.php';
+require_once './helpers/user.helper.php';
 // recuperation des categories
 
 
@@ -24,6 +25,8 @@ $categories = getCategories();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.ckeditor.com/4.22.0/full/ckeditor.js"></script>
+
     <title>Actunews</title>
 </head>
 
@@ -52,7 +55,7 @@ $categories = getCategories();
                     </ul>
                     <div class="text-right">
                         <a class="nav-item btn btn-outline-info mx-2" href="#">Connexion</a>
-                        <a class="nav-item btn btn-outline-warning mx-2" href="#">Inscription</a>
+                        <a class="nav-item btn btn-outline-warning mx-2" href="inscription.php">Inscription</a>
                     </div>
                 </div>
             </div>
