@@ -1,15 +1,15 @@
 <?php
 # Inclusion du header
-require_once './components/header.php';
+require_once './partials/header.php';
 
 # Récupération de mes articles
 $userId = $_GET['ID'];
 $posts = getPostsByUserId($userId);
-//dump($posts);
 
 # Récupération de l'auteur
 $user = getUserById($userId);
-//dump($user);
+#dump($user);
+#dump($posts);
 
 ?>
 
@@ -28,7 +28,9 @@ $user = getUserById($userId);
         <div class="container">
             <div class="row">
                 <?php foreach ($posts as $post):
-                    include 'components/post/_post-card.php';
+                    # On fait un copier / coller du fichier dans la boucle
+                    # Il y aura autant d'include que de tour de boucle
+                    include 'partials/post/_post-card.php';
                 endforeach ?>
             </div>
         </div>
@@ -39,5 +41,5 @@ $user = getUserById($userId);
 
 <?php
 # Inclusion du footer
-require_once './components/footer.php';
+require_once './partials/footer.php';
 ?>

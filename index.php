@@ -1,13 +1,14 @@
 <?php
-require_once './components/header.php'; // la page ne s'affiche pas s'il y a un erreur
-//include_once './components/header.php';// c'est affiche le reste de la page s'il y a un erreur
+    # Inclusion du header
+    require_once './partials/header.php';
 
-// recuperation de mes articles 
-$posts = getPosts(6);
-//var_dump($posts);
+    # Récupération de mes articles
+    $posts = getPosts(6);
+    # var_dump($posts);
 ?>
 
 <!-- Contenu de notre page -->
+<!-- .p-3.mx-auto.text-center>h1.display-4{Actunews} -->
 <main>
 
     <!-- Titre de la page -->
@@ -21,7 +22,9 @@ $posts = getPosts(6);
         <div class="container">
             <div class="row">
                 <?php foreach ($posts as $post):
-                    include './components/post/_post-card.php';
+                    # On fait un copier / coller du fichier dans la boucle
+                    # Il y aura autant d'include que de tour de boucle
+                    include 'partials/post/_post-card.php';
                 endforeach ?>
             </div>
         </div>
@@ -30,9 +33,7 @@ $posts = getPosts(6);
 </main>
 <!-- Fin -- Contenu de notre page -->
 
-<!-- fin de contenu de notre page -->
-
 <?php
-require_once './components/footer.php'; // la page ne s'affiche pas s'il y a un erreur
-//include_once './components/header.php';// c'est affiche le reste de la page s'il y a un erreur
+# Inclusion du footer
+require_once './partials/footer.php';
 ?>

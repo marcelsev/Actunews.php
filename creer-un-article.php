@@ -1,6 +1,12 @@
 <?php
 # Inclusion du header
-require_once './components/header.php';
+require_once './partials/header.php';
+
+# Vérification des droits d'accès
+$user = isAuthenticated();
+if ( !$user || ($user && !isGranted('ROLE_REPORTER')) ) {
+    redirect("connexion.php?danger=Vous n'avez pas les droits suffisants pour cette opération.");
+}
 
 # 1. Récupération des informations
 # Initialisation des variables à null
@@ -53,13 +59,19 @@ if (!empty($_POST)) {
     }
 
     #5. TODO Upload de l'image
+    if (empty($image['size'])) {
+        $errors['image'] = "N'oubliez pas l'image de votre article";
+    }
+
+    $image = uploadFiles($image, $title, '/posts');
+
     #6. TODO Notification Flash
     #7. Insertion dans la BDD
     if (empty($errors)) {
         try {
-        $id_post = insertPost($title, $slug, $content, $id_category, $id_user, $image);
+            $id_post = insertPost($title, $slug, $content, $id_category, $id_user, $image);
             if ($id_post) {
-                #8. TODO Redirection
+                redirect("article.php?info=Félicitation, votre article est en ligne !&slug=$slug");
             }
         } catch (Exception $exception) {
             dd($exception->getMessage());
@@ -128,12 +140,14 @@ if (!empty($_POST)) {
                         <div class="mb-3">
                             <label for="id_category" class="form-label">Catégorie</label>
                             <select
-                                    id="id_category" name="id_category" class="form-control <?= isset($errors['id_category']) ? 'is-invalid' : '' ?>" name="id_category">
+                                    id="id_category" name="id_category"
+                                    class="form-control <?= isset($errors['id_category']) ? 'is-invalid' : '' ?>"
+                                    name="id_category">
 
                                 <option selected disabled value="0">-- Choisissez une catégorie --</option>
                                 <?php foreach ($categories as $category): ?>
                                     <option
-                                            <?= $category['id_category'] == $id_category ? 'selected' : '' ?>
+                                        <?= $category['id_category'] == $id_category ? 'selected' : '' ?>
                                             value="<?= $category['id_category'] ?>">
                                         <?= $category['name'] ?>
                                     </option>
@@ -161,8 +175,14 @@ if (!empty($_POST)) {
                             <label for="image" class="form-label">Image</label>
                             <input type="file" class="form-control <?= isset($errors['image']) ? 'is-invalid' : '' ?>"
                                    id="image" name="image" placeholder="Choisissez votre image">
-                            <div class="invalid-feedback">
-                                <?= $errors['image'] ?? '' ?>
+                            <?php if (isset($errors['image'])) : ?>
+                                <div id="imageHelp" class="form-text text-danger">
+                                    <?= $errors['image'] ?? '' ?>
+                                </div>
+                            <?php endif; ?>
+                            <div id="imageHelp" class="form-text">
+                                Seul les formats .jpg, .jpeg, .gif et .png sont autorisés jusqu'à une taille de maximal
+                                de 5Mo
                             </div>
                         </div>
 
@@ -179,8 +199,10 @@ if (!empty($_POST)) {
 </main>
 <!-- Fin -- Contenu de notre page -->
 
-<script src="./assets/js/creer-un-article.js"></script>
+<!-- Chargement de mon script -->
+<script src="assets/js/creer-un-article.js"></script>
+
 <?php
 # Inclusion du header
-require_once './components/footer.php';
+require_once './partials/footer.php';
 ?>

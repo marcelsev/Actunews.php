@@ -3,7 +3,7 @@
 /**
  * Retourne les informations de l'utilisateur
  * via son ID.
- * 
+ * return void
  */
 function getUserById(int $idUser)
 {
@@ -23,19 +23,28 @@ function getUserById(int $idUser)
     return $query->fetch();
 }
 
-function insertUser(
-    string $firstname,
-    string $lastname,
-    string $username,
-    string $email,
-    string $password,
-    string $roles = 'ROLE_USER'
-) {
-
+/**
+ * Permet l'insertion d'un utilisateur
+ * dans la base de données
+ * param string $firstname
+ * param string $lastname
+ * param string $username
+ * param string $email
+ *param string $password
+ * param string $roles
+ * return false|string
+ */
+function insertUser(string $firstname,
+                    string $lastname,
+                    string $username,
+                    string $email,
+                    string $password,
+                    string $roles = 'ROLE_USER')
+{
     global $dbh;
     $sql = 'INSERT INTO user (firstname, lastname, username, email, password, roles, created_at, updated_at) 
-    VALUES (:firstname, :lastname, :username, :email, :password, :roles, :created_at, :updated_at)';
-    
+                VALUES (:firstname, :lastname, :username, :email, :password, :roles, :created_at, :updated_at)';
+
     $query = $dbh->prepare($sql);
     $query->bindValue('firstname', $firstname);
     $query->bindValue('lastname', $lastname);

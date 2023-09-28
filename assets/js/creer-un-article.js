@@ -19,6 +19,10 @@ function slugify(string) {
         .replace(/-+$/, '') // Trim - from end of text
 }
 
+/**
+ * Permet de générer automatiquement, l'alias #slug
+ * de l'article à partir du titre #title.
+ */
 document.querySelector('#title').addEventListener('input', function () {
     document.querySelector('#slug').value = slugify( this.value );
 });

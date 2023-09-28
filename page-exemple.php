@@ -1,9 +1,3 @@
-<?php
-    # Inclusion du header
-    require_once './components/header.php';
-?>
-
-<!-- Contenu de notre page -->
 <!-- .p-3.mx-auto.text-center>h1.display-4{Actunews} -->
 <main>
 
@@ -29,5 +23,5 @@
 
 <?php
 # Inclusion du header
-require_once './components/header.php';
+require_once './partials/footer.php';
 ?>

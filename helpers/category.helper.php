@@ -1,20 +1,19 @@
 <?php
-/* 
-*retourne les categories
-*de notre site
-*@return string[]
-*/
 
-function getCategories() : array
+/**
+ * Retourne les catégories
+ * de notre site depuis la BDD
+ * return string[]
+ */
+function getCategories(): array
 {
-    //recuperation de ma varbale $dbh  depuis l'espace global php
+    # Récupération de ma variable $dbh depuis l'espace global PHP
     global $dbh;
-    # j'effectue  ma requete de recuperation des categories
-    $query = $dbh -> query('SELECT * FROM category');
-    #je retourne le resultat
-    return $query-> fetchAll();
+
+    # J'effectue ma requête de récupération des catégories
+    $query = $dbh->query('SELECT * FROM category');
+
+    # Je retourne le résultat
+    return $query->fetchAll();
 }
 
-
-
-?>

@@ -1,0 +1,18 @@
+RewriteEngine On
+
+# Exclusions
+RewriteCond ${REQUEST_URI} ^.+$
+RewriteCond %{REQUEST_FILENAME} \.(gif|jpe?g|png|avif|js|css|swf|php|ico|txt|pdf|xml)$ [OR]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d [OR]
+RewriteCond %{REQUEST_FILENAME} -l
+RewriteRule ^ - [L]
+
+# Règles de Réecriture
+RewriteRule ^accueil.html index.php [QSA,L]
+RewriteRule ^inscription.html inscription.php [QSA,L]
+RewriteRule ^connexion.html connexion.php [QSA,L]
+RewriteRule ^deconnexion.html deconnexion.php [QSA,L]
+RewriteRule ^admin99562/creer-un-article.html creer-un-article.php [QSA,L]
+RewriteRule ^([^/]+)/([^/]+) article.php?slug=$2 [QSA,L]
+RewriteRule ^([^/]+) categorie.php?name=$1 [QSA,L]
