@@ -2,6 +2,7 @@
 # Inclusion du header
 require_once './partials/header.php';
 
+
 ?>
 
     <!-- Contenu de notre page -->
@@ -19,7 +20,7 @@ require_once './partials/header.php';
             <div class="container">
                 <div class="row">
                     <div class="col-8 mx-auto">
-                        <form novalidate id="contact" method="post" action=traitement.php">
+                        <form novalidate id="contact" method="post" action="xhr/contact.xhr.php">
 
                             <!-- Affichage d'une notification d'erreur -->
                             <?php if (!empty($errors)) : ?>
@@ -117,8 +118,19 @@ require_once './partials/header.php';
                         $('#contactBtn .spinner-border').addClass('d-none');
                     }
                 }).done(result => {
-                    // "result" contient le retour de la réponse du script PHP
-                });
+
+                    
+                // "result" contient le retour de la réponse du script PHP
+                
+                if (result.status) {
+                        $('#contact').replaceWith(`
+                            <div class="alert alert-success">
+                                Merci ${result.fullname}, nous avons bien reçu votre demande de contact.<br>
+                                Nous reviendrons vers vous rapidement.
+                            </div>
+                        `);          
+                }
+                    });
 
             }
         });
