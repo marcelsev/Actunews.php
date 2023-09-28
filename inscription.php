@@ -55,10 +55,12 @@ if (!empty($_POST)) {
         dump('entre dans empty post');
         $idUser = insertUser(...$_POST);
         if ($idUser) {
-            dump('idUser');
+            //dump('idUser');
+            // alerte de confirmation
+            addFlash('success', 'Félicitation votre inscription est effective. Vous pouvez vous connecter.');
             # Redirection vers la page connexion. Avec un message de confirmation.
             # TODO Idéalement, les messages sont passés via les sessions PHP. Message Flash.
-            redirect("connexion.php?info=Félicitation votre inscription est effective. Vous pouvez vous connecter.");
+            redirect("connexion.php");
         }
     } catch(Exception $e) {
         $e->getMessage();

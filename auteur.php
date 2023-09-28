@@ -11,6 +11,10 @@ $user = getUserById($userId);
 #dump($user);
 #dump($posts);
 
+
+if(!$user){
+    redirect('erreur404.php');
+}
 ?>
 
 <!-- Contenu de notre page -->

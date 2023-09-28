@@ -5,7 +5,8 @@ require_once './partials/header.php';
 # Vérification des droits d'accès
 $user = isAuthenticated();
 if ( !$user || ($user && !isGranted('ROLE_REPORTER')) ) {
-    redirect("connexion.php?danger=Vous n'avez pas les droits suffisants pour cette opération.");
+    addFlash('danger', "Vous n'avez pas les droits suffisants pour cette opération.");
+    redirect("connexion.php");
 }
 
 # 1. Récupération des informations
@@ -71,7 +72,9 @@ if (!empty($_POST)) {
         try {
             $id_post = insertPost($title, $slug, $content, $id_category, $id_user, $image);
             if ($id_post) {
-                redirect("article.php?info=Félicitation, votre article est en ligne !&slug=$slug");
+                addFlash('success', 'Félicitation, votre article est en ligne !');
+
+                redirect("article.php?slug=$slug");
             }
         } catch (Exception $exception) {
             dd($exception->getMessage());

@@ -87,3 +87,10 @@ function redirect(string $url): void {
     header("Location: $url");
     exit();
 }
+
+function addFlash(string $type, string $message){
+    $_SESSION['flashMessages'][] = [ 'type' => $type, 
+    'message'=> $message];
+
+    
+}

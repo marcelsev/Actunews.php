@@ -5,8 +5,16 @@ require_once './partials/header.php';
 # Récupération du paramètre slug depuis l'URL
 $slug = $_GET['slug'];
 
+// en cas d'absense du slug 
+if (!isset($_GET['slug'])){
+    redirect('accueil.html');
+}
 # Récupération de l'article
 $post = getPostBySlug($slug);
+
+if(!$post){
+    redirect('erreur404.php');
+}
 ?>
 
 <!-- Contenu de notre page -->

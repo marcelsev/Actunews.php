@@ -77,6 +77,9 @@ if (!empty($_POST)) {
                             </div>
                         <?php endif; ?>
 
+                        <!-- affichage des message flash -->
+                        <?php include 'partials/flash/_flash.message.php' ?>
+
                         <!-- Email -->
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
