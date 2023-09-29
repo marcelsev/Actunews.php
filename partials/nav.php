@@ -28,8 +28,8 @@
             <div class="text-right">
                 <?php if ($user) : ?>
 
-                    <span class="navbar-text mx-2">
-                        Bonjour <strong><?= $user['firstname'] ?></strong>
+                    <span class="navbar-text mx-2 " ><a href="mon-profil.php">
+                        Bonjour </a><strong><?= $user['firstname'] ?></strong>
                          <em>(<?= $user['roles'] ?>)</em>
                     </span>
 

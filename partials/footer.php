@@ -23,6 +23,7 @@
             </div>
             <div class="col-6 col-md">
                 <ul class="list-unstyled">
+                    <li><a href="contact.php" class="text-muted">Contactez-nous</a></li>
                     <li><a href="#" class="text-muted">Mentions légales</a></li>
                     <li><a href="#" class="text-muted">Politique de confidentialité</a></li>
                     <li><a href="#" class="text-muted">Plan du site</a></li>
